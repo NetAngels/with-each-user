@@ -51,6 +51,9 @@ This is the ``with_each_user --help`` output::
                             Number of processes to run simultaneously
       -d CURRENT_DIRECTORY, --current-directory CURRENT_DIRECTORY
                             Script working directory (relative to user's home)
+      -p, --preserve-environment
+                            Preserve root environment. Arguments match the same of
+                            "su" command
       -i, --interactive     Interactive execution. Set this flag to run processes
                             interactively
       -L LOG_DIRECTORY, --log-directory LOG_DIRECTORY
