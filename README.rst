@@ -22,7 +22,8 @@ Usage
 ------
 
 
-::
+This is the ``with_each_user --help`` output::
+
     usage: with_each_user [-h] [-m MASK] [-s SHELL] [-u MIN_UID] [-U MAX_UID]
                           [-c CONCURRENCY] [-d CURRENT_DIRECTORY] [-i]
                           [-L LOG_DIRECTORY]
