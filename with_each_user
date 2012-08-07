@@ -135,7 +135,7 @@ def add_prefix(text, prefix):
     if not text.strip():
         return ''
     chunks = text.splitlines()
-    ret = '\n'.join(['{0}{1}\n'.format(prefix, chunk) for chunk in chunks])
+    ret = ''.join(['{0}{1}\n'.format(prefix, chunk) for chunk in chunks])
     return ret
 
 
