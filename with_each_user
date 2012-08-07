@@ -98,11 +98,14 @@ def run_command(run_arguments):
     command = ' '.join(run_arguments['command'])
     current_directory = run_arguments.get('current_directory')
     log_directory = run_arguments.get('log_directory')
+    preserve_environment = run_arguments.get('preserve_environment', False)
     lock = run_arguments.get('lock', FakeLock())
 
     if current_directory is not None:
         command = 'cd {0} && {1}'.format(pipes.quote(current_directory), command)
     cmd = ['su', '-', user.pw_name, '-c', command]
+    if preserve_environment:
+        cmd.insert(1, '-p')
     pipe = subp.Popen(cmd, stdout=subp.PIPE, stderr=subp.PIPE)
     out, err = pipe.communicate()
     if log_directory:
@@ -197,6 +200,10 @@ def get_arguments():
                         help='Number of processes to run simultaneously')
     parser.add_argument('-d', '--current-directory',
                         help='Script working directory (relative to user\'s home)')
+    parser.add_argument('-p', '--preserve-environment', action='store_true',
+                        default=False,
+                        help='Preserve root environment. Arguments match the '
+                             'same of "su" command')
     parser.add_argument('-i', '--interactive', action='store_true', default=False,
                         help='Interactive execution. Set this flag to run '
                              'processes interactively')
