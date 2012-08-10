@@ -9,7 +9,7 @@ if sys.version_info[:2] == (2, 6):
 
 setup(
     name='with-each-user',
-    version='0.9.1',
+    version='0.9.2',
     author='NetAngels',
     author_email='info@netangels.ru',
     scripts=['with_each_user', ],
