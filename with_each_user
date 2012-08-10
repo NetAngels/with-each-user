@@ -89,8 +89,9 @@ def run_command(run_arguments):
     Basically, it just does
 
     su - username -c "command you typed"
-        or
-    su - username -c "cd dir/name && command you typed"
+    or, if option '--root' is used
+    bash -c "command you typed"
+
 
     and prints data to stdout/stderr or to log files
     """
@@ -98,14 +99,18 @@ def run_command(run_arguments):
     command = ' '.join(run_arguments['command'])
     current_directory = run_arguments.get('current_directory')
     log_directory = run_arguments.get('log_directory')
-    preserve_environment = run_arguments.get('preserve_environment', False)
     lock = run_arguments.get('lock', FakeLock())
 
     if current_directory is not None:
         command = 'cd {0} && {1}'.format(pipes.quote(current_directory), command)
-    cmd = ['su', '-', user.pw_name, '-c', command]
-    if preserve_environment:
-        cmd.insert(1, '-p')
+    if run_arguments.get('format'):
+        command = format_command(user, command)
+    if run_arguments.get('root'):
+        cmd = ['bash', '-c', command]
+    else:
+        cmd = ['su', '-', user.pw_name, '-c', command]
+        if run_arguments.get('preserve_environment'):
+            cmd.insert(1, '-p')
     pipe = subp.Popen(cmd, stdout=subp.PIPE, stderr=subp.PIPE)
     out, err = pipe.communicate()
     if log_directory:
@@ -126,6 +131,16 @@ def run_command(run_arguments):
             sys.stderr.write(prefixed_err)
         finally:
             lock.release()
+
+
+def format_command(user, command):
+    """
+    Format command string, if "-f" option is passed
+    """
+    context = {'user': user.pw_name, 'uid': user.pw_uid, 'gid': user.pw_gid,
+               'gecos': user.pw_gecos, 'home': user.pw_dir,
+               'shell': user.pw_shell}
+    return command.format(**context)
 
 
 def add_prefix(text, prefix):
@@ -204,6 +219,16 @@ def get_arguments():
                         default=False,
                         help='Preserve root environment. Arguments match the '
                              'same of "su" command')
+    parser.add_argument('-f', '--format', action='store_true',
+                        default=False,
+                        help='Format command line with variables custom for '
+                             'every user. Supported variables: {user}, {uid}, '
+                             '{gid}, {home}, {shell}, {gecos}.')
+    parser.add_argument('-r', '--root', action='store_true',
+                        default=False,
+                        help='Run command with root privileges (do not "su" to '
+                             'selected user). Option "--format" is helpful '
+                             'there')
     parser.add_argument('-i', '--interactive', action='store_true', default=False,
                         help='Interactive execution. Set this flag to run '
                              'processes interactively')

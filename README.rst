@@ -54,6 +54,11 @@ This is the ``with_each_user --help`` output::
       -p, --preserve-environment
                             Preserve root environment. Arguments match the same of
                             "su" command
+      -f, --format          Format command line with variables custom for every
+                            user. Supported variables: {user}, {uid}, {gid},
+                            {home}, {shell}, {gecos}.
+      -r, --root            Run command with root privileges (do not "su" to
+                            selected user). Option "--format" is helpful there
       -i, --interactive     Interactive execution. Set this flag to run processes
                             interactively
       -L LOG_DIRECTORY, --log-directory LOG_DIRECTORY
