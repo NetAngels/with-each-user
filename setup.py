@@ -3,6 +3,12 @@ import sys
 from distutils.core import setup
 
 
+def read(fname):
+    try:
+        return open(os.path.join(os.path.dirname(__file__), fname)).read()
+    except:
+        return ''
+
 requirements = []
 if sys.version_info[:2] == (2, 6):
     requirements.append('argparse')
@@ -17,6 +23,7 @@ setup(
     license = 'BSD',
     description = ('utility which helps to execute commands on behalf of all '
                    'users in the system in a row'),
+    long_description = read('README.rst'),
     install_requires=requirements,
     classifiers=(
         'Development Status :: 4 - Beta',
